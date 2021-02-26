@@ -31,11 +31,20 @@ async def srvstatus(ctx):
         msg += f'Players: {info["OnlinePlayers"]}/{info["TotalPlayers"]}\n\n'
         msg += f'Memory useage: {psutil.virtual_memory().percent}%\n\nCPU Cores:\n'
         for percentage in psutil.cpu_percent(percpu=True, interval=1):
-            percentage_denominator = 10
-            percentage_fraction = round(percentage / percentage_denominator)
-            percentage_viz = '█' * percentage_fraction + '░' * \
-                (percentage_denominator - percentage_fraction)
-            msg += f"|{percentage_viz}| {percentage}%\n"
+            denominator = 30
+            whole_fraction = math.floor(percentage / denominator)
+            viz = '█' * whole_fraction
+            remaining = denominator - whole_fraction
+            modulus = percentage % denominator
+            modulus_fraction = denominator / modulus if modulus != 0 else 0
+            if modulus_fraction > (2/3):
+                viz += '▓'
+                remaining -= 1
+            elif modulus_fraction > (1/3):
+                viz += '▒'
+                remaining -= 1
+            viz += '░' * remaining
+            msg += f"|{viz}| {percentage}%\n"
         msg += (f"Total CPU Usage: {psutil.cpu_percent()}%")
         await ctx.channel.send(msg)
     else:
