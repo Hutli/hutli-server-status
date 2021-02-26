@@ -10,8 +10,26 @@ load_dotenv()
 DISCORD_APP_TOKEN = os.getenv('DISCORD_APP_TOKEN')
 SERVER_URL = os.getenv('SERVER_URL')
 
+DENOMINATOR = 30
+
 client = Bot(description="Hutli's Server Status",
              command_prefix="!", pm_help=False, )
+
+
+def get_viz(percentage):
+    procent_point = 100 / DENOMINATOR
+    whole_fraction = math.floor(percentage / procent_point)
+    viz += '█' * whole_fraction
+    remaining = DENOMINATOR - whole_fraction
+    modulus_fraction = percentage % procent_point
+    if modulus_fraction > (2/3):
+        viz += '▓'
+        remaining -= 1
+    elif modulus_fraction > (1/3):
+        viz += '▒'
+        remaining -= 1
+    viz += '░' * remaining
+    return f'|{viz}|'
 
 
 @client.event
@@ -29,22 +47,13 @@ async def srvstatus(ctx):
         msg = ''
         info = requests.get(SERVER_URL).json()
         msg += f'Players: {info["OnlinePlayers"]}/{info["TotalPlayers"]}\n\n'
-        msg += f'Memory useage: {psutil.virtual_memory().percent}%\n\nCPU Cores:\n'
+        msg += f'Memory useage:\n'
+        mem_percent = psutil.virtual_memory().percent
+        msg += f'{get_viz(mem_percent)} {mem_percent}%\n\n'
+        msg += 'CPU Cores:\n'
+
         for percentage in psutil.cpu_percent(percpu=True, interval=1):
-            denominator = 30
-            procent_point = 100 / denominator
-            whole_fraction = math.floor(percentage / procent_point)
-            viz = '█' * whole_fraction
-            remaining = denominator - whole_fraction
-            modulus_fraction = percentage % procent_point
-            if modulus_fraction > (2/3):
-                viz += '▓'
-                remaining -= 1
-            elif modulus_fraction > (1/3):
-                viz += '▒'
-                remaining -= 1
-            viz += '░' * remaining
-            msg += f"|{viz}| {percentage}%\n"
+            msg += f"{get_viz(percentage)} {percentage}%\n"
         msg += (f"Total CPU Usage: {psutil.cpu_percent()}%")
         await ctx.channel.send(msg)
     else:
