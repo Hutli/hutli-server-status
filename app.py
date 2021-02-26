@@ -17,9 +17,13 @@ client = Bot(description="Hutli's Server Status",
 @client.event
 async def on_ready():
     print("Bot is ready!")
+    activity = discord.Activity(
+        type=discord.ActivityType.watching, name="you all...")
+    #activity = discord.CustomActivity(name='Downloading more RAM...')
+    await client.change_presence(activity=activity)
 
 
-@client.command(pass_context=True)
+@ client.command(pass_context=True)
 async def srvstatus(ctx):
     if ctx.message.author.guild_permissions.administrator:
         msg = ''
@@ -28,8 +32,7 @@ async def srvstatus(ctx):
         msg += f'Memory useage: {psutil.virtual_memory().percent}%\n\nCPU Cores:\n'
         for percentage in psutil.cpu_percent(percpu=True, interval=1):
             percentage_denominator = 10
-            percentage_fraction = round(
-                percentage / percentage_denominator)
+            percentage_fraction = round(percentage / percentage_denominator)
             percentage_viz = '█' * percentage_fraction + '░' * \
                 (percentage_denominator - percentage_fraction)
             msg += f"|{percentage_viz}| {percentage}%\n"
