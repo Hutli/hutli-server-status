@@ -32,7 +32,7 @@ async def srvstatus(ctx):
         msg += f'Memory useage: {psutil.virtual_memory().percent}%\n\nCPU Cores:\n'
         for percentage in psutil.cpu_percent(percpu=True, interval=1):
             denominator = 30
-            whole_fraction = math.floor(percentage / denominator)
+            whole_fraction = math.floor(denominator * (percentage / 100))
             viz = '█' * whole_fraction
             remaining = denominator - whole_fraction
             modulus = percentage % denominator
