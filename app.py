@@ -19,7 +19,7 @@ client = Bot(description="Hutli's Server Status",
 def get_viz(percentage):
     procent_point = 100 / DENOMINATOR
     whole_fraction = math.floor(percentage / procent_point)
-    viz += '█' * whole_fraction
+    viz = '█' * whole_fraction
     remaining = DENOMINATOR - whole_fraction
     modulus_fraction = percentage % procent_point
     if modulus_fraction > (2/3):
