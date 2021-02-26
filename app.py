@@ -19,7 +19,7 @@ async def on_ready():
     print("Bot is ready!")
     activity = discord.Activity(
         type=discord.ActivityType.watching, name="you all...")
-    #activity = discord.CustomActivity(name='Downloading more RAM...')
+    # activity = discord.CustomActivity(name='Downloading more RAM...')
     await client.change_presence(activity=activity)
 
 
@@ -32,11 +32,11 @@ async def srvstatus(ctx):
         msg += f'Memory useage: {psutil.virtual_memory().percent}%\n\nCPU Cores:\n'
         for percentage in psutil.cpu_percent(percpu=True, interval=1):
             denominator = 30
-            whole_fraction = math.floor(denominator * (percentage / 100))
+            procent_point = 100 / denominator
+            whole_fraction = math.floor(percentage / procent_point)
             viz = '█' * whole_fraction
             remaining = denominator - whole_fraction
-            modulus = percentage % denominator
-            modulus_fraction = denominator / modulus if modulus != 0 else 0
+            modulus_fraction = percentage % procent_point
             if modulus_fraction > (2/3):
                 viz += '▓'
                 remaining -= 1
